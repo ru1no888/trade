@@ -1,0 +1,12 @@
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.swp
+*.swo
+.DS_Store
+.env/
+venv/
+.venv/
+trade_temp/
+.vscode/
