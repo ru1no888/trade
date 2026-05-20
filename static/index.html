@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Auto FX Paper Bot</title>
+  <link rel="stylesheet" href="/static/style.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <h1>Auto FX Paper Bot</h1>
+      <p>BUY = ซื้อขึ้น | SELL = ขายลง / Short</p>
+    </div>
+    <div class="badge" id="autoBadge">AUTO: OFF</div>
+  </header>
+
+  <main>
+    <section class="panel quick-start">
+      <div class="step">
+        <span>1</span>
+        <b>ตลาด</b>
+        <select id="marketPreset"></select>
+      </div>
+      <div class="step">
+        <span>2</span>
+        <b>เวลา</b>
+        <select id="timePreset"></select>
+      </div>
+      <div class="step">
+        <span>3</span>
+        <b>ความเสี่ยง</b>
+        <select id="riskPreset"></select>
+      </div>
+      <button id="applyPresetBtn">ใช้ค่า</button>
+    </section>
+
+    <section class="grid top-grid">
+      <div class="panel control-panel">
+        <h2>ใช้งาน</h2>
+        <div class="button-row primary-actions">
+          <button id="startBtn" class="success">เริ่ม Auto</button>
+          <button id="stopBtn" class="danger">หยุด</button>
+          <button id="trainBtn">เทรน</button>
+          <button id="closeBtn">ปิดไม้</button>
+        </div>
+        <div class="button-row secondary-actions">
+          <button id="chartBtn">รีเฟรชกราฟ</button>
+          <button id="reloadBtn">บอทคิด 1 ครั้ง</button>
+          <button id="scanBtn">สแกนตลาด</button>
+          <button id="resetBtn" class="danger-outline">รีเซ็ต paper</button>
+        </div>
+        <pre id="log">พร้อมใช้: เลือก preset → เทรน → เริ่ม Auto</pre>
+      </div>
+
+      <div class="panel">
+        <h2>สัญญาณ</h2>
+        <div class="signal" id="signalText">WAIT</div>
+        <div class="side-help">BUY ซื้อขึ้น | SELL ขายลง</div>
+        <div class="stats">
+          <div><span>ราคา</span><b id="closeVal">-</b></div>
+          <div><span>โอกาสขึ้น</span><b id="probVal">-</b></div>
+          <div><span>RSI</span><b id="rsiVal">-</b></div>
+          <div><span>ข่าว</span><b id="newsVal">-</b></div>
+        </div>
+        <p id="reasonText" class="muted">ยังไม่มีสัญญาณ</p>
+      </div>
+
+      <div class="panel">
+        <h2>พอร์ต paper</h2>
+        <div class="stats">
+          <div><span>Balance</span><b id="balanceVal">-</b></div>
+          <div><span>Equity</span><b id="equityVal">-</b></div>
+          <div><span>กำไรลอย</span><b id="unrealizedVal" class="pnl-live">-</b></div>
+          <div><span>ราคาตอนนี้</span><b id="currentPriceVal">-</b></div>
+          <div><span>ไม้</span><b id="tradeCountVal">-</b></div>
+        </div>
+        <div id="positionBox" class="position-box">ไม่มีไม้เปิด</div>
+      </div>
+    </section>
+
+    <section class="panel chart-panel">
+      <div class="panel-title">
+        <h2>กราฟ <small id="chartSymbol">-</small></h2>
+        <span id="chartStatus">ยังไม่โหลด</span>
+      </div>
+      <canvas id="chartCanvas" width="1200" height="520"></canvas>
+    </section>
+
+    <details class="panel advanced-panel">
+      <summary>ตั้งค่าเพิ่มเติม</summary>
+      <form id="configForm" class="config-form">
+        <label>สินทรัพย์ <input name="symbol" placeholder="EURUSD=X,AAPL,MSFT" /></label>
+        <label>ย้อนหลัง
+          <select name="period">
+            <option value="7d">7 วัน</option>
+            <option value="30d">30 วัน</option>
+            <option value="60d">60 วัน</option>
+            <option value="6mo">6 เดือน</option>
+            <option value="1y">1 ปี</option>
+            <option value="2y">2 ปี</option>
+            <option value="5y">5 ปี</option>
+          </select>
+        </label>
+        <label>แท่งเวลา
+          <select name="interval">
+            <option value="1m">1 นาที</option>
+            <option value="2m">2 นาที</option>
+            <option value="5m">5 นาที</option>
+            <option value="15m">15 นาที</option>
+            <option value="30m">30 นาที</option>
+            <option value="1h">1 ชั่วโมง</option>
+            <option value="1d">1 วัน</option>
+          </select>
+        </label>
+
+        <div class="two-cols">
+          <label>มองกี่แท่ง <input name="horizon_candles" type="number" min="1" max="20" /></label>
+          <label>ทุน paper <input name="account_balance" type="number" step="0.01" /></label>
+          <label>โหมดเสี่ยง
+            <select name="risk_mode">
+              <option value="safe_balanced">น้อย / ถือพอดี</option>
+              <option value="rapid_1usd">ไว $1 / ปิดเร็ว</option>
+              <option value="aggressive">แรง / เสี่ยงมาก</option>
+            </select>
+          </label>
+          <label>เป้าไว $ <input name="rapid_target_usd" type="number" step="0.01" min="0.01" /></label>
+          <label>เสี่ยง/ไม้ % <input name="risk_percent" type="number" step="0.01" /></label>
+          <label>Reward:Risk <input name="reward_risk" type="number" step="0.1" /></label>
+          <label>ATR SL <input name="atr_sl_multiplier" type="number" step="0.1" /></label>
+          <label>AI ขั้นต่ำ <input name="min_model_probability" type="number" step="0.01" min="0.5" max="0.95" /></label>
+          <label>Refresh วิ <input name="auto_refresh_seconds" type="number" min="5" /></label>
+          <label>ไม้สูงสุด/วัน <input name="max_trades_per_day" type="number" min="1" /></label>
+          <label>ตัดขาดทุน $ <input name="max_loss_usd" type="number" step="0.01" min="0.01" /></label>
+          <label>ปิดกำไร $ <input name="max_profit_usd" type="number" step="0.01" min="0.01" /></label>
+          <label>ข่าวลบหยุดที่ <input name="bad_news_threshold" type="number" step="0.01" min="-1" max="0" /></label>
+          <label>กรอง noise เทรน ATR <input name="min_target_move_atr" type="number" step="0.05" min="0" max="3" /></label>
+          <label>Force ขั้นต่ำ <input name="force_min_probability" type="number" step="0.01" min="0.5" max="0.95" /></label>
+          <label>แพ้ติดหยุด <input name="max_consecutive_losses" type="number" min="0" max="100" /></label>
+          <label>Auto Risk ต่ำสุด % <input name="auto_risk_min_percent" type="number" step="0.01" min="0.01" /></label>
+          <label>Auto Risk สูงสุด % <input name="auto_risk_max_percent" type="number" step="0.01" min="0.01" /></label>
+        </div>
+
+        <label class="checkbox">ใช้ข่าวกรอง <input name="use_news_filter" type="checkbox" /></label>
+        <label class="checkbox">คำค้นข่าวออโต้ <input name="auto_news_query" type="checkbox" /></label>
+        <label class="checkbox">Rapid Paper $1 <input name="rapid_paper_mode" type="checkbox" /></label>
+        <label class="checkbox">Auto เลือกตัวที่มีสัญญาณ <input name="auto_trade_best_symbol" type="checkbox" /></label>
+        <label class="checkbox">ข่าวลบแรงให้หยุด <input name="pause_on_bad_news" type="checkbox" /></label>
+        <label class="checkbox">Force trade ไม่รอ WAIT <input name="force_trade_mode" type="checkbox" /></label>
+        <label class="checkbox">Force ต้องตามเทรนด์ <input name="force_respect_trend" type="checkbox" /></label>
+        <label class="checkbox">Strict ลดไม้มั่ว <input name="strict_signal_mode" type="checkbox" /></label>
+        <label class="checkbox">Auto Risk ปรับเอง <input name="auto_risk_mode" type="checkbox" /></label>
+        <label>คำค้นข่าว <textarea name="news_query"></textarea></label>
+        <button id="saveBtn" type="button">บันทึกตั้งค่า</button>
+      </form>
+    </details>
+
+    <details class="panel advanced-panel">
+      <summary>สแกนตลาด / ประวัติ</summary>
+      <div class="panel-title">
+        <h2>สแกนตลาด</h2>
+        <span id="scanStatus">รอเทรน</span>
+      </div>
+      <div id="bestDownBox" class="best-box">ยังไม่มีตัวน่าลง</div>
+      <div id="newsBox" class="news-box">ข่าว: รอโหลด</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Symbol</th><th>Signal</th><th>แนะนำ</th><th>ข่าว</th><th>ลง%</th><th>ราคา</th><th>คำค้นข่าว</th><th>เหตุผล</th>
+            </tr>
+          </thead>
+          <tbody id="scanBody"></tbody>
+        </table>
+      </div>
+
+      <h2>ประวัติไม้</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>เปิด</th><th>ฝั่ง</th><th>เข้า</th><th>SL</th><th>TP</th><th>ออก</th><th>เหตุผล</th><th>PNL</th><th>Balance</th>
+            </tr>
+          </thead>
+          <tbody id="tradeBody"></tbody>
+        </table>
+      </div>
+    </details>
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

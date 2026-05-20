@@ -1,0 +1,85 @@
+{
+  "balance": 1000.21,
+  "start_balance": 1000.0,
+  "open_position": null,
+  "trades": [
+    {
+      "symbol": "GBPUSD=X",
+      "side": "SELL",
+      "entry": 1.343725,
+      "stop_loss": 1.344397,
+      "take_profit": 1.343053,
+      "risk_amount": 1.0,
+      "risk_percent": 0.1,
+      "rr": 1.0,
+      "approx_lot": 0.015,
+      "opened_at": "2026-05-20 22:14:00+00:00",
+      "probability_up": 0.4273,
+      "news_sentiment": 0.0347,
+      "exit": 1.343725,
+      "closed_at": "2026-05-20 22:14:00+00:00",
+      "close_reason": "MANUAL_CLOSE",
+      "pnl": 0.0,
+      "balance_after": 1000.0
+    },
+    {
+      "symbol": "GBPUSD=X",
+      "side": "SELL",
+      "entry": 1.343833,
+      "stop_loss": 1.344505,
+      "take_profit": 1.343161,
+      "risk_amount": 1.0,
+      "risk_percent": 0.1,
+      "rr": 1.0,
+      "approx_lot": 0.015,
+      "opened_at": "2026-05-20 22:15:00+00:00",
+      "probability_up": 0.4177,
+      "news_sentiment": 0.0347,
+      "exit": 1.343689,
+      "closed_at": "2026-05-20 22:24:00+00:00",
+      "close_reason": "MANUAL_CLOSE",
+      "pnl": 0.21,
+      "balance_after": 1000.21
+    }
+  ],
+  "equity_curve": [
+    {
+      "time": "2026-05-20 22:14:00+00:00",
+      "balance": 1000.0,
+      "pnl": 0.0,
+      "reason": "MANUAL_CLOSE"
+    },
+    {
+      "time": "2026-05-20 22:24:00+00:00",
+      "balance": 1000.21,
+      "pnl": 0.21,
+      "reason": "MANUAL_CLOSE"
+    }
+  ],
+  "last_signal": {
+    "symbol": "EURUSD=X",
+    "signal": "WAIT",
+    "suggested_side": "BUY",
+    "suggested_probability": 0.4562,
+    "force_trade": false,
+    "market_pause": false,
+    "probability_up": 0.4562,
+    "probability_down": 0.5438,
+    "close": 1.163061,
+    "ema_50": 1.162974,
+    "ema_200": 1.162964,
+    "rsi_14": 54.5,
+    "atr_14": 5.1e-05,
+    "news_sentiment": 0.0473,
+    "reason": [
+      "เงื่อนไขยังไม่ครบ -> WAIT"
+    ]
+  },
+  "last_action_candle_time": "2026-05-20 22:15:00+00:00",
+  "last_step_at": "2026-05-20T22:32:03Z",
+  "status": "closed MANUAL_CLOSE",
+  "current_price": 1.163061,
+  "current_price_time": "2026-05-20 22:31:00+00:00",
+  "unrealized_pnl": 0.0,
+  "equity": 1000.21
+}

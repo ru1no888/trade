@@ -1,0 +1,21 @@
+{
+  "balance": 1000.0,
+  "start_balance": 1000.0,
+  "open_position": {
+    "symbol": "AUDUSD=X",
+    "side": "BUY",
+    "entry": 0.715,
+    "stop_loss": 0.714,
+    "take_profit": 0.716,
+    "risk_amount": 1.0,
+    "rr": 1.0,
+    "approx_lot": 0.01,
+    "opened_at": "2026-05-20T00:15:00Z"
+  },
+  "trades": [],
+  "equity_curve": [],
+  "last_signal": null,
+  "last_action_candle_time": null,
+  "last_step_at": null,
+  "status": "holding AUDUSD=X; skipped wrong symbol EURUSD=X"
+}
